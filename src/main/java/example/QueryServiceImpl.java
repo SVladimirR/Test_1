@@ -4,7 +4,6 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
-
 public class QueryServiceImpl implements QueryService {
     private StringBuilder output;
 
@@ -13,10 +12,10 @@ public class QueryServiceImpl implements QueryService {
         output = new StringBuilder();
 
         inputData.queries.parallelStream().forEachOrdered(query -> {
-            char[] podS = getSubstring(query, inputData.s);
-            char kthChar = getKthChar(podS, query.k);
-            int countKthChar = countKthCharOccurrences(podS, kthChar, query.k);
-            int charPosition = getCharPosition(podS, countKthChar, getOppositeChar(kthChar));
+
+            char kthChar = getKthChar(inputData.s, query.l, query.k);
+            CustomPair<char[], Integer> fs = getSubstring(query, inputData.s, kthChar, query.k);
+            int charPosition = getCharPosition(fs, getOppositeChar(kthChar));
 
             output.append(charPosition).append("\n");
         });
@@ -24,43 +23,39 @@ public class QueryServiceImpl implements QueryService {
         writeOutputToFile(output.toString(), "output.txt");
     }
 
-    private char[] getSubstring(Query query, String s) {
+
+    private CustomPair<char[], Integer> getSubstring(Query query, String s, char kthChar, int k) {
         char[] result = new char[query.r - query.l + 1];
+        int countKthChar = 0;
+
         for (int i = 0; i < result.length; i++) {
             result[i] = s.charAt(query.l + i - 1);
-        }
-        return result;
-    }
-
-    private char getKthChar(char[] substring, int k) {
-        return substring[k - 1];
-    }
-
-    private int countKthCharOccurrences(char[] substring, char kthChar, int k) {
-        int count = 0;
-        for (char c : substring) {
-            if (c == kthChar) {
-                count++;
-                if (count == k) {
-                    break;
-                }
+            if (i < k && result[i] == kthChar) {
+                countKthChar++;
             }
         }
-        return count;
+        return new CustomPair<>(result, countKthChar);
     }
 
-    private int getCharPosition(char[] substring, int k, char kthChar) {
+
+    private char getKthChar(String s, int originalPosition, int k) {
+        return s.charAt(originalPosition - 1 + k - 1);
+    }
+
+    private int getCharPosition(CustomPair<char[], Integer> pair, char kthChar) {
+        char[] substring = pair.getFirst();
+        int k = pair.getSecond();
         int count = 0;
         int position = -1;
+
         for (int i = 0; i < substring.length; i++) {
-            if (substring[i] == kthChar) {
-                count++;
-                if (count == k) {
-                    position = i + 1;
-                    break;
-                }
+            char currentChar = substring[i];
+            if (currentChar == kthChar && ++count == k) {
+                position = i + 1;
+                break;
             }
         }
+
         return position;
     }
 

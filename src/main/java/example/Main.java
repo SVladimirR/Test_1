@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        long startTime = System.nanoTime();
+//        long startTime = System.nanoTime();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(new File("input.txt")))) {
 
@@ -51,10 +51,10 @@ public class Main {
         } catch (IllegalArgumentException | IOException e) {
             e.printStackTrace();
         }
-        long endTime = System.nanoTime();
-        long executionTime = (endTime - startTime) / 1_000_000;
-
-        System.out.println("Program time: " + executionTime + " milliseconds");
+//        long endTime = System.nanoTime();
+//        long executionTime = (endTime - startTime) / 1_000_000;
+//
+//        System.out.println("Program time: " + executionTime + " milliseconds");
     }
 
 }
